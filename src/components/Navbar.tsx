@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, Radio, ArrowLeft, Calendar, ShieldCheck } from "lucide-react";
+import { Trophy, Radio, ArrowLeft, Calendar, ShieldCheck, Zap } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabaseClient";
 
 interface NavbarProps {
@@ -14,6 +14,7 @@ export default function Navbar({ onOpenSeasonModal, currentSeasonName }: NavbarP
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
   const isRegister = pathname.startsWith("/register");
+  const isPoints = pathname.startsWith("/points");
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-pubg-border bg-pubg-dark/95 backdrop-blur-md">
@@ -40,19 +41,35 @@ export default function Navbar({ onOpenSeasonModal, currentSeasonName }: NavbarP
             </div>
           </Link>
 
-          {/* Navigation Links & Red Registration Button */}
+          {/* Navigation Links & Actions */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             
             {/* Season Selector Modal Trigger (User side) */}
             {!isAdmin && onOpenSeasonModal && (
               <button
                 onClick={onOpenSeasonModal}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold transition-all shrink-0"
+                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold transition-all shrink-0"
                 title="Switch season"
               >
                 <Calendar className="w-3.5 h-3.5 text-pubg-gold" />
-                <span className="max-w-[120px] truncate">{currentSeasonName || "Seasons"}</span>
+                <span className="max-w-[100px] truncate">{currentSeasonName || "Seasons"}</span>
               </button>
+            )}
+
+            {/* Point System Page Button */}
+            {!isAdmin && (
+              <Link
+                href="/points"
+                className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border transition-all shrink-0 ${
+                  isPoints
+                    ? "bg-pubg-gold/15 border-pubg-gold/40 text-pubg-gold shadow-neon-gold"
+                    : "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800"
+                }`}
+              >
+                <Zap className="w-3.5 h-3.5 text-pubg-gold" />
+                <span className="hidden sm:inline">Point System</span>
+                <span className="sm:hidden">Points</span>
+              </Link>
             )}
 
             {/* Red Team Registration Button */}
@@ -66,13 +83,6 @@ export default function Navbar({ onOpenSeasonModal, currentSeasonName }: NavbarP
                 <span className="xs:hidden">Register</span>
               </Link>
             )}
-
-            {/* Live Indicator */}
-            <div className="hidden lg:flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-red-950/40 border border-red-500/30 text-red-400 text-[11px] sm:text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-red-500 live-badge-glow" />
-              <Radio className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-pulse" />
-              <span>LIVE STANDINGS</span>
-            </div>
 
             {/* Navigation Tabs */}
             <nav className="flex items-center gap-2">
@@ -89,13 +99,13 @@ export default function Navbar({ onOpenSeasonModal, currentSeasonName }: NavbarP
                 <Link
                   href="/"
                   className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${
-                    !isRegister
+                    !isRegister && !isPoints
                       ? "bg-pubg-gold/15 border border-pubg-gold/30 text-pubg-gold shadow-neon-gold"
                       : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
                   }`}
                 >
                   <Trophy className="w-4 h-4" />
-                  <span className="hidden sm:inline">Leaderboard</span>
+                  <span className="hidden md:inline">Leaderboard</span>
                 </Link>
               )}
             </nav>

@@ -22,7 +22,7 @@ export default function PublicLeaderboardPage() {
   const [selectedTeamEntry, setSelectedTeamEntry] = useState<LeaderboardEntry | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isSeasonModalOpen, setIsSeasonModalOpen] = useState(true); // Popup open on 1st load
+  const [isSeasonModalOpen, setIsSeasonModalOpen] = useState(false);
 
   // Load Data function (from Supabase or local store)
   const fetchData = async () => {
@@ -65,6 +65,13 @@ export default function PublicLeaderboardPage() {
   };
 
   useEffect(() => {
+    // Only open season popup modal on initial website visit, not when returning to standings
+    const hasSeenModal = sessionStorage.getItem("pubg_has_seen_season_modal");
+    if (!hasSeenModal) {
+      setIsSeasonModalOpen(true);
+      sessionStorage.setItem("pubg_has_seen_season_modal", "true");
+    }
+
     fetchData();
 
     // Setup Supabase Realtime Subscription if configured
