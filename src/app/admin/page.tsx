@@ -7,12 +7,12 @@ import AdminTeamsTab from "@/components/AdminTeamsTab";
 import AdminMatchesTab from "@/components/AdminMatchesTab";
 import { getLocalStoreData, isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
 import { Season, Team, Match, MatchResult } from "@/lib/types";
-import { Shield, Lock, Calendar, Users, Gamepad2, Unlock, AlertCircle } from "lucide-react";
+import { Shield, Lock, Calendar, Users, Gamepad2, Unlock, AlertCircle, Trophy } from "lucide-react";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(true); // Default unlocked for easy user access
   const [passcode, setPasscode] = useState("");
-  const [activeTab, setActiveTab] = useState<"seasons" | "teams" | "matches">("matches");
+  const [activeTab, setActiveTab] = useState<"seasons" | "teams" | "matches" | "standings">("matches");
 
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -184,6 +184,18 @@ export default function AdminPage() {
                 <Calendar className="w-4 h-4" />
                 Seasons Manager ({seasons.length})
               </button>
+
+              <button
+                onClick={() => setActiveTab("standings")}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black tracking-wide transition-all ${
+                  activeTab === "standings"
+                    ? "bg-pubg-gold text-slate-950 shadow-neon-gold"
+                    : "bg-pubg-card text-slate-400 hover:text-white border border-pubg-border"
+                }`}
+              >
+                <Trophy className="w-4 h-4" />
+                Live Standings Preview
+              </button>
             </div>
 
             {/* Tab Views */}
@@ -211,6 +223,26 @@ export default function AdminPage() {
               <AdminSeasonsTab seasons={seasons} onRefresh={loadData} />
             )}
 
+            {activeTab === "standings" && (
+              <div className="space-y-6">
+                <div className="glass-panel rounded-2xl p-6 border border-pubg-border">
+                  <h3 className="font-extrabold text-white text-lg flex items-center gap-2 mb-2">
+                    <Trophy className="w-5 h-5 text-pubg-gold" />
+                    Live Cumulative Standings
+                  </h3>
+                  <p className="text-xs text-slate-400 mb-6">
+                    This is a live preview of the public leaderboard for the active season. It automatically calculates the sum of all published match results.
+                  </p>
+                  
+                  {(() => {
+                    const { computeLeaderboard } = require("@/lib/supabaseClient");
+                    const LeaderboardTable = require("@/components/LeaderboardTable").default;
+                    const standings = computeLeaderboard(activeSeasonId, teams, matches, results);
+                    return <LeaderboardTable data={standings} />;
+                  })()}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
