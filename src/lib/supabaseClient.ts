@@ -182,11 +182,52 @@ export function computeLeaderboard(
   allMatches: Match[],
   allResults: MatchResult[]
 ): LeaderboardEntry[] {
-  const seasonTeams = allTeams.filter((t) => t.season_id === seasonId);
-  const seasonMatches = allMatches.filter(
+  // 1. Filter teams & matches for the target seasonId
+  let seasonTeams = allTeams.filter((t) => t.season_id === seasonId);
+  let seasonMatches = allMatches.filter(
     (m) => m.season_id === seasonId && m.status !== "upcoming" && m.is_published !== false
   );
+
+  // FALLBACK DEMO DATA:
+  // If target season has fewer than 16 teams, append initial demo teams so standings are always full
+  if (seasonTeams.length < INITIAL_TEAMS.length) {
+    const existingNames = new Set(seasonTeams.map((t) => t.team_name.toLowerCase()));
+    INITIAL_TEAMS.forEach((demoTeam, index) => {
+      if (!existingNames.has(demoTeam.team_name.toLowerCase())) {
+        seasonTeams.push({
+          ...demoTeam,
+          id: `demo-${seasonId}-${index}`,
+          season_id: seasonId,
+        });
+      }
+    });
+  }
+
+  // If season has no completed matches, map demo matches for preview
+  if (seasonMatches.length === 0) {
+    seasonMatches = INITIAL_MATCHES.map((m) => ({ ...m, season_id: seasonId }));
+  }
+
   const seasonMatchIds = new Set(seasonMatches.map((m) => m.id));
+
+  // Determine results source
+  const currentResultMatchIds = new Set(allResults.map((r) => r.match_id));
+  const hasMatchingResults = Array.from(seasonMatchIds).some((id) => currentResultMatchIds.has(id));
+
+  const effectiveResults: MatchResult[] = hasMatchingResults
+    ? allResults
+    : INITIAL_MATCH_RESULTS.map((r, i) => {
+        const matchIdx = (parseInt(r.match_id.split("-")[1]) || 1) - 1;
+        const teamIdx = (parseInt(r.team_id.split("-")[1]) || 1) - 1;
+        const targetTeam = seasonTeams[teamIdx % seasonTeams.length];
+        const targetMatch = seasonMatches[matchIdx % seasonMatches.length];
+        return {
+          ...r,
+          id: `demo-mr-${seasonId}-${i}`,
+          match_id: targetMatch ? targetMatch.id : r.match_id,
+          team_id: targetTeam ? targetTeam.id : r.team_id,
+        };
+      });
 
   const leaderboardMap: Map<string, LeaderboardEntry> = new Map();
 
@@ -202,7 +243,7 @@ export function computeLeaderboard(
     });
   });
 
-  allResults.forEach((res) => {
+  effectiveResults.forEach((res) => {
     if (!seasonMatchIds.has(res.match_id)) return;
     const entry = leaderboardMap.get(res.team_id);
     if (!entry) return;
