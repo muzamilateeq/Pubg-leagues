@@ -46,6 +46,13 @@ export function getLocalStoreData() {
     let matches: Match[] = rawMatches ? JSON.parse(rawMatches) : INITIAL_MATCHES;
     let results: MatchResult[] = rawResults ? JSON.parse(rawResults) : INITIAL_MATCH_RESULTS;
 
+    // Clean out old testing seasons from cache
+    seasons = seasons.filter((s) => s.name && !s.name.toLowerCase().includes("testiing") && !s.name.toLowerCase().includes("testing"));
+    if (seasons.length === 0) {
+      seasons = INITIAL_SEASONS;
+      localStorage.setItem(STORAGE_KEYS.SEASONS, JSON.stringify(seasons));
+    }
+
     // Refresh if cached team count is less than initial seed
     if (teams.length < INITIAL_TEAMS.length) {
       teams = INITIAL_TEAMS;
