@@ -221,7 +221,14 @@ export default function AdminPage() {
             )}
 
             {activeTab === "seasons" && (
-              <AdminSeasonsTab seasons={seasons} onRefresh={loadData} />
+              <AdminSeasonsTab 
+                seasons={seasons} 
+                onRefresh={loadData} 
+                onManageSeason={(id) => {
+                  setActiveSeasonId(id);
+                  setActiveTab("matches");
+                }}
+              />
             )}
 
             {activeTab === "standings" && (

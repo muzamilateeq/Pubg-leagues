@@ -3,16 +3,17 @@
 import { useState } from "react";
 import { Season } from "@/lib/types";
 import { dbSaveSeason, dbSaveMatch, setLocalStoreData, isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
-import { Calendar, Plus, CheckCircle, Clock, Trash2, Trophy } from "lucide-react";
+import { Calendar, Plus, CheckCircle, Clock, Trash2, Trophy, Settings } from "lucide-react";
 
 interface AdminSeasonsTabProps {
   seasons: Season[];
   onRefresh: () => void;
+  onManageSeason?: (seasonId: string) => void;
 }
 
 const PRESET_MAPS = ["Erangel", "Miramar", "Sanhok", "Vikendi"];
 
-export default function AdminSeasonsTab({ seasons, onRefresh }: AdminSeasonsTabProps) {
+export default function AdminSeasonsTab({ seasons, onRefresh, onManageSeason }: AdminSeasonsTabProps) {
   const [newSeasonName, setNewSeasonName] = useState("");
   const [newSeasonStatus, setNewSeasonStatus] = useState<"active" | "completed">("active");
   const [matchCount, setMatchCount] = useState(0);
@@ -216,6 +217,16 @@ export default function AdminSeasonsTab({ seasons, onRefresh }: AdminSeasonsTabP
               </div>
 
               <div className="flex items-center gap-3">
+                {onManageSeason && (
+                  <button
+                    onClick={() => onManageSeason(season.id)}
+                    className="px-3 py-1.5 rounded-full text-xs font-bold uppercase border bg-pubg-gold/10 text-pubg-gold border-pubg-gold/30 hover:bg-pubg-gold hover:text-slate-950 transition-colors flex items-center gap-1.5"
+                    title="Manage this Season's Teams and Matches"
+                  >
+                    <Settings className="w-3.5 h-3.5" /> Manage
+                  </button>
+                )}
+
                 <button
                   onClick={() => toggleStatus(season.id)}
                   className={`px-3 py-1 rounded-full text-xs font-bold uppercase border transition-colors flex items-center gap-1.5 ${
