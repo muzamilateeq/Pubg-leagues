@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { Shield, MessageCircle, ArrowLeft, Clock, Zap, CheckCircle2, Copy, Check, Users, PhoneCall } from "lucide-react";
+import { Shield, MessageCircle, ArrowLeft, Clock, CheckCircle2, Copy, Check, Users, PhoneCall, Tag, Sparkles, UserPlus } from "lucide-react";
 import { useState } from "react";
 
 export default function RegisterPage() {
   const [copied, setCopied] = useState(false);
   const whatsappNumber = "03098541632";
-  const whatsappFormatted = "+92 309 8541632";
   const whatsappLink = `https://wa.me/923098541632?text=${encodeURIComponent(
-    "Hello PUBG League Admins! I want to register my team for the upcoming tournament."
+    "Hello PUBG League Admins! I want to register my team for the tournament with reference discount."
   )}`;
 
   const handleCopyNumber = () => {
@@ -59,6 +58,49 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          {/* Entry Fee & Reference Discount Banner */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-amber-950/40 via-pubg-card to-amber-950/40 border-2 border-pubg-gold/50 shadow-neon-gold space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-pubg-gold/30 pb-3">
+              <div className="flex items-center gap-2 text-pubg-gold font-black text-sm sm:text-base uppercase tracking-wider">
+                <Tag className="w-5 h-5 text-pubg-gold fill-pubg-gold" />
+                TEAM REGISTRATION FEE & REFERENCE OFFER
+              </div>
+              <span className="px-3 py-1 rounded-full bg-pubg-gold text-slate-950 text-[11px] font-black uppercase tracking-wider self-start sm:self-auto shadow-md">
+                DISCOUNT OFFER
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Standard Price */}
+              <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between">
+                <div>
+                  <span className="block text-[10px] text-slate-400 uppercase font-bold">Standard Entry Fee</span>
+                  <span className="text-xs text-slate-400">Regular Team Registration</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-xl font-extrabold text-slate-400 line-through">RS 250</span>
+                </div>
+              </div>
+
+              {/* Reference Discount Price */}
+              <div className="p-4 rounded-xl bg-amber-950/60 border-2 border-pubg-gold flex items-center justify-between shadow-neon-gold">
+                <div>
+                  <span className="block text-[10px] text-pubg-gold uppercase font-black">With Reference Discount</span>
+                  <span className="text-xs text-emerald-400 font-bold">Save RS 50 Instantly!</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-2xl font-black text-pubg-gold drop-shadow-[0_0_10px_rgba(243,175,25,0.5)]">RS 200</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/70 border border-pubg-border text-xs text-slate-300 flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 text-pubg-gold shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                <strong>Register A Team From Your Reference:</strong> Standard registration fee is <strong>RS 250</strong>, but if you register a team from your reference or refer another team, entry fee is <strong>JUST RS 200!</strong> Simply mention your reference when contacting us on WhatsApp.
+              </p>
+            </div>
+          </div>
 
           {/* Main Action Box: WhatsApp Registration */}
           <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-emerald-950/30 via-slate-900 to-slate-950 border-2 border-emerald-500/40 shadow-xl space-y-6 text-center">
@@ -71,7 +113,7 @@ export default function RegisterPage() {
                 REGISTER VIA WHATSAPP
               </h2>
               <p className="text-xs sm:text-sm text-slate-300">
-                Contact our tournament organizers on WhatsApp to submit your team details and lock in your slot for the upcoming season!
+                Contact our tournament organizers on WhatsApp to submit your team details & reference info for the <strong>RS 200</strong> special entry rate!
               </p>
             </div>
 
@@ -115,7 +157,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-300">
               <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-950/80 border border-slate-800">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>1. Official Team Name</span>
+                <span>1. Official Team Name & Logo</span>
               </div>
               <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-950/80 border border-slate-800">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -125,9 +167,9 @@ export default function RegisterPage() {
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>3. Player Roster (4 Main Players + 1 Sub)</span>
               </div>
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>4. Contact Phone Number & Logo</span>
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-950/80 border border-pubg-gold/50">
+                <UserPlus className="w-4 h-4 text-pubg-gold shrink-0" />
+                <span className="text-pubg-gold font-bold">4. Reference / Referrer Name (For RS 200 Rate)</span>
               </div>
             </div>
           </div>
