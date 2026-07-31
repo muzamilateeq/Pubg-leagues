@@ -119,45 +119,15 @@ export default function Navbar({ onOpenSeasonModal, currentSeasonName }: NavbarP
 
           </div>
 
-          {/* Mobile Buttons Bar (Visible on mobile viewports < md) */}
-          <div className="flex md:hidden items-center gap-1.5 shrink-0">
-            
-            {!isAdmin && (
-              <Link
-                href="/points"
-                onClick={markModalSeen}
-                className={`p-2 rounded-xl border text-xs font-bold flex items-center gap-1 ${
-                  isPoints
-                    ? "bg-pubg-gold/20 border-pubg-gold text-pubg-gold"
-                    : "bg-slate-900 border-slate-800 text-slate-300"
-                }`}
-                title="Point System"
-              >
-                <Zap className="w-4 h-4 text-pubg-gold" />
-                <span className="text-[11px]">Points</span>
-              </Link>
-            )}
-
-            {!isAdmin && (
-              <Link
-                href="/register"
-                onClick={markModalSeen}
-                className="px-2.5 py-2 rounded-xl bg-red-600 text-white font-black text-[11px] uppercase flex items-center gap-1 shadow-[0_0_10px_rgba(239,68,68,0.4)]"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Register</span>
-              </Link>
-            )}
-
-            {/* Mobile Menu Dropdown Toggle */}
+          {/* Mobile 3-Lines Menu Toggle Button (Visible on mobile viewports < md) */}
+          <div className="flex md:hidden items-center shrink-0">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200"
+              className="p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 transition-colors"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-pubg-gold" /> : <Menu className="w-5 h-5 text-slate-200" />}
+              {mobileMenuOpen ? <X className="w-6 h-6 text-pubg-gold" /> : <Menu className="w-6 h-6 text-slate-200" />}
             </button>
-
           </div>
 
         </div>
