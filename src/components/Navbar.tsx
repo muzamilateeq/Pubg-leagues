@@ -2,10 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, Radio, ArrowLeft } from "lucide-react";
+import { Trophy, Radio, ArrowLeft, Calendar } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabaseClient";
 
-export default function Navbar() {
+interface NavbarProps {
+  onOpenSeasonModal?: () => void;
+  currentSeasonName?: string;
+}
+
+export default function Navbar({ onOpenSeasonModal, currentSeasonName }: NavbarProps) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
 
@@ -35,10 +40,22 @@ export default function Navbar() {
           </Link>
 
           {/* Navigation Links & Live Status */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             
+            {/* Season Selector Modal Trigger (User side) */}
+            {!isAdmin && onOpenSeasonModal && (
+              <button
+                onClick={onOpenSeasonModal}
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold transition-all shrink-0"
+                title="Switch season"
+              >
+                <Calendar className="w-3.5 h-3.5 text-pubg-gold" />
+                <span className="max-w-[90px] sm:max-w-[140px] truncate">{currentSeasonName || "Seasons"}</span>
+              </button>
+            )}
+
             {/* Live Indicator */}
-            <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-red-950/40 border border-red-500/30 text-red-400 text-[11px] sm:text-xs font-semibold">
+            <div className="hidden xs:flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-red-950/40 border border-red-500/30 text-red-400 text-[11px] sm:text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-red-500 live-badge-glow" />
               <Radio className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-pulse" />
               <span className="hidden sm:inline">LIVE STANDINGS</span>
@@ -66,7 +83,7 @@ export default function Navbar() {
               ) : (
                 <div className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-pubg-gold/15 border border-pubg-gold/30 text-pubg-gold text-xs sm:text-sm font-extrabold shadow-neon-gold">
                   <Trophy className="w-4 h-4" />
-                  <span>Leaderboard</span>
+                  <span className="hidden xs:inline">Leaderboard</span>
                 </div>
               )}
             </nav>

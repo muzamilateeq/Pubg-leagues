@@ -6,10 +6,11 @@ import SeasonSelector from "@/components/SeasonSelector";
 import StatCards from "@/components/StatCards";
 import LeaderboardTable from "@/components/LeaderboardTable";
 import TeamDetailModal from "@/components/TeamDetailModal";
+import SeasonSelectionModal from "@/components/SeasonSelectionModal";
 import { computeLeaderboard, getLocalStoreData, isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
 import { Season, Team, Match, MatchResult, LeaderboardEntry } from "@/lib/types";
 import { getTeamLogoUrl } from "@/lib/pubgRules";
-import { Trophy, Radio, RefreshCw, Flame, Shield, MapPin, Zap, Clock, Hourglass, Users, AlertTriangle, CheckCircle } from "lucide-react";
+import { Trophy, Radio, RefreshCw, Flame, Shield, Zap, Clock, Hourglass, Users, CheckCircle, Radar, Layers } from "lucide-react";
 
 export default function PublicLeaderboardPage() {
   const [seasons, setSeasons] = useState<Season[]>([]);
@@ -20,6 +21,7 @@ export default function PublicLeaderboardPage() {
   const [selectedTeamEntry, setSelectedTeamEntry] = useState<LeaderboardEntry | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isSeasonModalOpen, setIsSeasonModalOpen] = useState(true); // Popup open on 1st load
 
   // Load Data function (from Supabase or local store)
   const fetchData = async () => {
@@ -113,44 +115,71 @@ export default function PublicLeaderboardPage() {
 
   return (
     <div className="min-h-screen bg-pubg-dark text-slate-100 flex flex-col font-sans">
-      <Navbar />
+      <Navbar
+        onOpenSeasonModal={() => setIsSeasonModalOpen(true)}
+        currentSeasonName={currentSeasonObj?.name}
+      />
+
+      {/* Season Selection Popup Modal on 1st Load / Request */}
+      <SeasonSelectionModal
+        isOpen={isSeasonModalOpen}
+        seasons={seasons}
+        teams={teams}
+        matches={matches}
+        selectedSeasonId={selectedSeasonId}
+        onSelectSeason={(id) => {
+          setSelectedSeasonId(id);
+          setIsSeasonModalOpen(false);
+        }}
+        onClose={() => setIsSeasonModalOpen(false)}
+      />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         
         {/* Hero Banner with Season Switcher & Live Counter */}
-        <div className="relative z-20 glass-panel rounded-3xl p-6 sm:p-10 border border-pubg-border bg-gradient-to-r from-slate-950 via-pubg-card to-slate-950">
+        <div className="relative z-20 glass-panel rounded-3xl p-5 sm:p-8 md:p-10 border border-pubg-border bg-gradient-to-r from-slate-950 via-pubg-card to-slate-950">
           
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8">
             <div className="space-y-3 max-w-2xl">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2.5">
                 <span className="px-3 py-1 rounded-full bg-pubg-gold/20 border border-pubg-gold/40 text-pubg-gold text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-neon-gold">
                   <Zap className="w-3.5 h-3.5 fill-pubg-gold text-pubg-gold" /> OFFICIAL PUBG ESPORTS
                 </span>
                 <span className="text-xs text-slate-400 font-semibold flex items-center gap-1">
-                  <Radio className="w-3 h-3 text-red-500 animate-pulse" /> Live Leaderboard
+                  <Radio className="w-3 h-3 text-red-500 animate-pulse" /> Live Standings Portal
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-black text-white uppercase italic tracking-tight leading-none">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white uppercase italic tracking-tight leading-none">
                 CHAMPIONSHIP <span className="text-pubg-gold drop-shadow-[0_2px_10px_rgba(243,175,25,0.5)]">STANDINGS</span>
               </h1>
               
-              <p className="text-sm text-slate-300">
+              <p className="text-xs sm:text-sm text-slate-300">
                 Track live placement ranks, WWCD victories, and total elimination scores in real-time.
-                Click on any team row to inspect match-by-match performance breakdowns.
+                Click on any team row to inspect match performance breakdowns.
               </p>
             </div>
 
             {/* Season Selector & Quick Stats */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              {seasons.length > 0 && (
-                <SeasonSelector
-                  seasons={seasons}
-                  selectedSeasonId={selectedSeasonId}
-                  onSelectSeason={(id) => setSelectedSeasonId(id)}
-                />
-              )}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+              <button
+                onClick={() => setIsSeasonModalOpen(true)}
+                className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-pubg-card border-2 border-pubg-gold/50 text-left hover:border-pubg-gold transition-all shadow-neon-gold group"
+              >
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="p-2 rounded-lg bg-pubg-gold/20 text-pubg-gold border border-pubg-gold/30">
+                    <Layers className="w-5 h-5" />
+                  </div>
+                  <div className="truncate">
+                    <span className="block text-[10px] text-slate-400 uppercase font-black">Active Season</span>
+                    <h4 className="font-bold text-white text-sm truncate">{currentSeasonObj?.name || "Select Season"}</h4>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-pubg-gold text-slate-950 shrink-0">
+                  Switch
+                </span>
+              </button>
 
               <div className="p-3.5 rounded-xl bg-pubg-card border border-pubg-border text-center flex flex-col justify-center min-w-[120px]">
                 <span className="text-[10px] text-slate-400 uppercase font-black">Published Matches</span>
@@ -181,41 +210,39 @@ export default function PublicLeaderboardPage() {
             />
           </>
         ) : (
-          /* CONDITION: If 0 Published Matches for Selected Season -> Render Gaming Banner */
+          /* CONDITION: If 0 Published Matches for Selected Season -> Render Gaming Waiting Dashboard */
           <div className="space-y-8 animate-in fade-in duration-300">
-            <div className="glass-panel rounded-3xl p-8 sm:p-12 border border-pubg-border text-center space-y-6 relative overflow-hidden bg-gradient-to-b from-slate-900/90 via-pubg-card to-slate-950">
+            <div className="glass-panel rounded-3xl p-6 sm:p-12 border border-pubg-border text-center space-y-6 relative overflow-hidden bg-gradient-to-b from-slate-900/90 via-pubg-card to-slate-950 shadow-2xl">
               
-              <div className="relative w-20 h-20 rounded-3xl bg-pubg-gold/10 border border-pubg-gold/30 text-pubg-gold flex items-center justify-center mx-auto shadow-neon-gold">
-                {currentSeasonObj?.status === "completed" ? (
-                  <CheckCircle className="w-10 h-10 text-emerald-400" />
-                ) : (
-                  <Hourglass className="w-10 h-10 animate-pulse text-pubg-gold" />
-                )}
+              {/* Radar Scanner Animation Icon */}
+              <div className="relative w-24 h-24 rounded-full bg-slate-950 border-2 border-pubg-gold/40 flex items-center justify-center mx-auto shadow-neon-gold group">
+                <div className="absolute inset-0 rounded-full border border-pubg-gold/20 animate-ping" />
+                <Radar className="w-10 h-10 text-pubg-gold animate-spin" style={{ animationDuration: '6s' }} />
+                <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-emerald-400 live-badge-glow" />
               </div>
 
-              <div className="max-w-xl mx-auto space-y-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5 border ${
-                    currentSeasonObj?.status === "completed"
-                      ? "bg-slate-800 text-slate-300 border-slate-700"
-                      : "bg-amber-950/80 border border-amber-500/40 text-amber-400"
-                  }`}
-                >
-                  <Clock className="w-3.5 h-3.5" />
-                  {currentSeasonObj?.status === "completed"
-                    ? "SEASON COMPLETED / ARCHIVED"
-                    : "MATCHES IN PROCESSING / COMING SOON"}
+              <div className="max-w-xl mx-auto space-y-3">
+                <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider inline-flex items-center gap-2 border bg-amber-950/80 border-amber-500/40 text-amber-400 shadow-lg">
+                  <Hourglass className="w-3.5 h-3.5 animate-pulse" />
+                  SEASON REGISTERED • WAITING FOR MATCH SCORES
                 </span>
 
                 <h2 className="text-2xl sm:text-4xl font-black text-white uppercase italic tracking-tight">
                   {currentSeasonObj?.name || "SELECTED SEASON"}
                 </h2>
 
-                <p className="text-sm text-slate-300">
-                  {currentSeasonObj?.status === "completed"
-                    ? "This season has ended. No active match scores recorded for this tournament archive."
-                    : "Matches for this season are currently live in progress or being recorded by tournament admins. Standings will be published live as soon as Match 1 scoring is completed!"}
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Teams are registered and lobby scoring is currently in progress. As soon as tournament organizers submit and publish Match 1 scores, live standings and WWCD leaderboards will appear right here!
                 </p>
+
+                <div className="pt-2">
+                  <button
+                    onClick={() => fetchData()}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-pubg-gold font-bold text-xs border border-pubg-gold/40 transition-colors shadow-md"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} /> Check For Live Updates
+                  </button>
+                </div>
               </div>
 
               {/* Registered Teams Preview Card Grid */}
@@ -225,13 +252,13 @@ export default function PublicLeaderboardPage() {
                     <Users className="w-4 h-4 text-pubg-gold" /> REGISTERED TEAMS IN {currentSeasonObj?.name} ({seasonTeams.length})
                   </h3>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     {seasonTeams.map((t) => (
                       <div
                         key={t.id}
-                        className="p-3 rounded-xl bg-slate-900/80 border border-pubg-border flex items-center gap-3"
+                        className="p-3 rounded-xl bg-slate-900/80 border border-pubg-border flex items-center gap-3 hover:border-pubg-gold/40 transition-colors"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-slate-950 border border-slate-700 p-1 flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-slate-950 border border-slate-700 p-1 flex items-center justify-center shrink-0">
                           <img
                             src={getTeamLogoUrl(t.team_name, t.logo_url)}
                             alt={t.team_name}
@@ -244,6 +271,9 @@ export default function PublicLeaderboardPage() {
                         <div className="text-left truncate">
                           <p className="text-xs font-bold text-white truncate">{t.team_name}</p>
                           <p className="text-[10px] text-slate-400 truncate">Cap: {t.captain_name || "N/A"}</p>
+                          <span className="inline-block mt-0.5 text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/30">
+                            READY FOR DROP
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -260,12 +290,12 @@ export default function PublicLeaderboardPage() {
         )}
 
         {/* Easy To Understand: Point System & Rules Guide for Spectators & Players */}
-        <div className="glass-panel rounded-2xl p-6 border border-pubg-border bg-slate-900/50 space-y-4">
-          <div className="flex items-center justify-between border-b border-pubg-border/50 pb-3">
-            <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+        <div className="glass-panel rounded-2xl p-4 sm:p-6 border border-pubg-border bg-slate-900/50 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-pubg-border/50 pb-3 gap-2">
+            <h3 className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
               <Trophy className="w-4 h-4 text-pubg-gold" /> OFFICIAL PUBG ESPORTS POINT SYSTEM
             </h3>
-            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest bg-slate-800 px-2.5 py-1 rounded-full border border-slate-700">
+            <span className="self-start sm:self-auto text-[10px] text-slate-400 font-semibold uppercase tracking-widest bg-slate-800 px-2.5 py-1 rounded-full border border-slate-700">
               SUPER Ruleset
             </span>
           </div>
