@@ -41,10 +41,20 @@ export function getLocalStoreData() {
     const rawMatches = localStorage.getItem(STORAGE_KEYS.MATCHES);
     const rawResults = localStorage.getItem(STORAGE_KEYS.RESULTS);
 
-    const seasons: Season[] = rawSeasons ? JSON.parse(rawSeasons) : INITIAL_SEASONS;
-    const teams: Team[] = rawTeams ? JSON.parse(rawTeams) : INITIAL_TEAMS;
-    const matches: Match[] = rawMatches ? JSON.parse(rawMatches) : INITIAL_MATCHES;
-    const results: MatchResult[] = rawResults ? JSON.parse(rawResults) : INITIAL_MATCH_RESULTS;
+    let seasons: Season[] = rawSeasons ? JSON.parse(rawSeasons) : INITIAL_SEASONS;
+    let teams: Team[] = rawTeams ? JSON.parse(rawTeams) : INITIAL_TEAMS;
+    let matches: Match[] = rawMatches ? JSON.parse(rawMatches) : INITIAL_MATCHES;
+    let results: MatchResult[] = rawResults ? JSON.parse(rawResults) : INITIAL_MATCH_RESULTS;
+
+    // Refresh if cached team count is less than initial seed
+    if (teams.length < INITIAL_TEAMS.length) {
+      teams = INITIAL_TEAMS;
+      matches = INITIAL_MATCHES;
+      results = INITIAL_MATCH_RESULTS;
+      localStorage.setItem(STORAGE_KEYS.TEAMS, JSON.stringify(teams));
+      localStorage.setItem(STORAGE_KEYS.MATCHES, JSON.stringify(matches));
+      localStorage.setItem(STORAGE_KEYS.RESULTS, JSON.stringify(results));
+    }
 
     if (!rawSeasons) localStorage.setItem(STORAGE_KEYS.SEASONS, JSON.stringify(seasons));
     if (!rawTeams) localStorage.setItem(STORAGE_KEYS.TEAMS, JSON.stringify(teams));
