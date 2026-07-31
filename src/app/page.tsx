@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import SeasonSelector from "@/components/SeasonSelector";
 import StatCards from "@/components/StatCards";
@@ -161,11 +162,19 @@ export default function PublicLeaderboardPage() {
               </p>
             </div>
 
-            {/* Season Selector & Quick Stats */}
+            {/* Season Selector, Register Team & Quick Stats */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+              <Link
+                href="/register"
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_20px_rgba(239,68,68,0.6)] transition-all hover:scale-105 active:scale-95 shrink-0"
+              >
+                <Shield className="w-4 h-4 text-white" />
+                <span>Register Team</span>
+              </Link>
+
               <button
                 onClick={() => setIsSeasonModalOpen(true)}
-                className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-pubg-card border-2 border-pubg-gold/50 text-left hover:border-pubg-gold transition-all shadow-neon-gold group"
+                className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-pubg-card border-2 border-pubg-gold/50 text-left hover:border-pubg-gold transition-all shadow-neon-gold group shrink-0"
               >
                 <div className="flex items-center gap-3 overflow-hidden">
                   <div className="p-2 rounded-lg bg-pubg-gold/20 text-pubg-gold border border-pubg-gold/30">
@@ -181,7 +190,7 @@ export default function PublicLeaderboardPage() {
                 </span>
               </button>
 
-              <div className="p-3.5 rounded-xl bg-pubg-card border border-pubg-border text-center flex flex-col justify-center min-w-[120px]">
+              <div className="p-3.5 rounded-xl bg-pubg-card border border-pubg-border text-center flex flex-col justify-center min-w-[110px] shrink-0">
                 <span className="text-[10px] text-slate-400 uppercase font-black">Published Matches</span>
                 <span className="text-xl font-black text-white">{publishedCompletedMatches.length}</span>
               </div>
