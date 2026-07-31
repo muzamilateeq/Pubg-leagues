@@ -59,16 +59,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Notice Card: Online Portal Coming Soon */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-slate-900/90 border border-amber-500/30 space-y-3 relative overflow-hidden">
-            <div className="flex items-center gap-3 text-amber-400 font-extrabold text-sm sm:text-base uppercase tracking-wider">
-              <Zap className="w-5 h-5 text-amber-400 fill-amber-400 animate-bounce shrink-0" />
-              ONLINE REGISTRATION METHOD COMING SOON
-            </div>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Automated online web form submission is currently under active development for our next portal update. In the meantime, <strong>all team registrations are handled directly via WhatsApp</strong> by our official PUBG Tournament Organizers!
-            </p>
-          </div>
 
           {/* Main Action Box: WhatsApp Registration */}
           <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-emerald-950/30 via-slate-900 to-slate-950 border-2 border-emerald-500/40 shadow-xl space-y-6 text-center">
