@@ -55,9 +55,11 @@ export function getLocalStoreData() {
 
     // Refresh if cached team count is less than initial seed
     if (teams.length < INITIAL_TEAMS.length) {
-      teams = INITIAL_TEAMS;
-      matches = INITIAL_MATCHES;
+      const primarySeasonId = seasons[0]?.id || "season-1";
+      teams = INITIAL_TEAMS.map((t) => ({ ...t, season_id: primarySeasonId }));
+      matches = INITIAL_MATCHES.map((m) => ({ ...m, season_id: primarySeasonId }));
       results = INITIAL_MATCH_RESULTS;
+      
       localStorage.setItem(STORAGE_KEYS.TEAMS, JSON.stringify(teams));
       localStorage.setItem(STORAGE_KEYS.MATCHES, JSON.stringify(matches));
       localStorage.setItem(STORAGE_KEYS.RESULTS, JSON.stringify(results));
