@@ -334,34 +334,52 @@ export default function AdminMatchesTab({
                       </div>
 
                       {/* Controls Footer */}
-                      <div className="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between gap-1">
+                      <div className="mt-3 pt-2 border-t border-slate-800/80 flex flex-col gap-2">
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleTogglePublish(m.id, isPub);
+                            handleSelectMatch(m.id);
                           }}
-                          className={`flex-1 py-1 text-[10px] font-extrabold uppercase rounded border transition-colors flex items-center justify-center gap-1 ${
-                            isPub
-                              ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
-                              : "bg-pubg-gold text-slate-950 border-pubg-gold hover:bg-amber-400"
+                          className={`w-full py-1.5 text-[10px] font-extrabold uppercase rounded border transition-colors flex items-center justify-center gap-1.5 ${
+                            isSelected
+                              ? "bg-pubg-gold text-slate-950 border-pubg-gold shadow-neon-gold"
+                              : "bg-slate-800/50 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white"
                           }`}
                         >
-                          {isPub ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                          {isPub ? "Unpublish" : "Publish"}
+                          <Edit3 className="w-3.5 h-3.5" />
+                          {isSelected ? "Currently Editing" : "Edit Match Scores"}
                         </button>
+                        
+                        <div className="flex items-center justify-between gap-1">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTogglePublish(m.id, isPub);
+                            }}
+                            className={`flex-1 py-1 text-[10px] font-extrabold uppercase rounded border transition-colors flex items-center justify-center gap-1 ${
+                              isPub
+                                ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+                                : "bg-pubg-gold text-slate-950 border-pubg-gold hover:bg-amber-400"
+                            }`}
+                          >
+                            {isPub ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                            {isPub ? "Unpublish" : "Publish"}
+                          </button>
 
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteMatch(m.id);
-                          }}
-                          className="p-1 rounded bg-slate-900 text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
-                          title="Delete Match"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteMatch(m.id);
+                            }}
+                            className="p-1 rounded bg-slate-900 text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                            title="Delete Match"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );

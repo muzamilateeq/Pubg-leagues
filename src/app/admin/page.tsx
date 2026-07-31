@@ -5,7 +5,8 @@ import Navbar from "@/components/Navbar";
 import AdminSeasonsTab from "@/components/AdminSeasonsTab";
 import AdminTeamsTab from "@/components/AdminTeamsTab";
 import AdminMatchesTab from "@/components/AdminMatchesTab";
-import { getLocalStoreData, isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
+import LeaderboardTable from "@/components/LeaderboardTable";
+import { getLocalStoreData, isSupabaseConfigured, supabase, computeLeaderboard } from "@/lib/supabaseClient";
 import { Season, Team, Match, MatchResult } from "@/lib/types";
 import { Shield, Lock, Calendar, Users, Gamepad2, Unlock, AlertCircle, Trophy } from "lucide-react";
 
@@ -235,10 +236,8 @@ export default function AdminPage() {
                   </p>
                   
                   {(() => {
-                    const { computeLeaderboard } = require("@/lib/supabaseClient");
-                    const LeaderboardTable = require("@/components/LeaderboardTable").default;
                     const standings = computeLeaderboard(activeSeasonId, teams, matches, results);
-                    return <LeaderboardTable data={standings} />;
+                    return <LeaderboardTable standings={standings} onSelectTeam={() => {}} />;
                   })()}
                 </div>
               </div>
