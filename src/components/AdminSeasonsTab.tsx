@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Season } from "@/lib/types";
-import { dbSaveSeason, setLocalStoreData, isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
+import { dbSaveSeason, dbSaveMatch, setLocalStoreData, isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
 import { Calendar, Plus, CheckCircle, Clock, Trash2, Trophy } from "lucide-react";
 
 interface AdminSeasonsTabProps {
@@ -10,21 +10,62 @@ interface AdminSeasonsTabProps {
   onRefresh: () => void;
 }
 
+const PRESET_MAPS = ["Erangel", "Miramar", "Sanhok", "Vikendi"];
+
 export default function AdminSeasonsTab({ seasons, onRefresh }: AdminSeasonsTabProps) {
   const [newSeasonName, setNewSeasonName] = useState("");
   const [newSeasonStatus, setNewSeasonStatus] = useState<"active" | "completed">("active");
+  const [matchCount, setMatchCount] = useState(0);
+  const [matchMaps, setMatchMaps] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleMatchCountChange = (count: number) => {
+    const newCount = Math.max(0, Math.min(20, count));
+    setMatchCount(newCount);
+    // Keep existing maps if we shrink, otherwise pad with Erangel
+    setMatchMaps((prev) => {
+      const updated = [...prev];
+      if (newCount > prev.length) {
+        for (let i = prev.length; i < newCount; i++) updated.push("Erangel");
+      }
+      return updated.slice(0, newCount);
+    });
+  };
 
   const handleCreateSeason = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newSeasonName.trim()) return;
+    if (!newSeasonName.trim() || isSubmitting) return;
 
-    await dbSaveSeason({
-      name: newSeasonName.trim(),
-      status: newSeasonStatus,
-    });
+    setIsSubmitting(true);
+    try {
+      const savedSeason = await dbSaveSeason({
+        name: newSeasonName.trim(),
+        status: newSeasonStatus,
+      });
 
-    setNewSeasonName("");
-    onRefresh();
+      const seasonId = savedSeason?.[0]?.id;
+
+      if (seasonId && matchCount > 0) {
+        for (let i = 0; i < matchCount; i++) {
+          await dbSaveMatch({
+            season_id: seasonId,
+            match_number: i + 1,
+            map_name: matchMaps[i],
+            status: "draft",
+            is_published: false,
+          });
+        }
+      }
+
+      setNewSeasonName("");
+      setMatchCount(0);
+      setMatchMaps([]);
+      onRefresh();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const toggleStatus = async (seasonId: string) => {
@@ -86,6 +127,43 @@ export default function AdminSeasonsTab({ seasons, onRefresh }: AdminSeasonsTabP
           </div>
 
           <div>
+            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">Number of Matches</label>
+            <input
+              type="number"
+              min="0"
+              max="20"
+              value={matchCount}
+              onChange={(e) => handleMatchCountChange(parseInt(e.target.value) || 0)}
+              className="w-full px-4 py-2.5 bg-pubg-card border border-pubg-border rounded-xl text-sm text-white focus:outline-none focus:border-pubg-gold transition-colors"
+              placeholder="e.g. 5"
+            />
+          </div>
+
+          {matchCount > 0 && (
+            <div className="space-y-3 p-4 border border-pubg-border/50 rounded-xl bg-slate-900/30">
+              <label className="block text-xs font-bold text-slate-300 uppercase">Map Configuration</label>
+              {matchMaps.map((mapName, idx) => (
+                <div key={idx} className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-slate-400 w-16">Match {idx + 1}</span>
+                  <select
+                    value={mapName}
+                    onChange={(e) => {
+                      const newMaps = [...matchMaps];
+                      newMaps[idx] = e.target.value;
+                      setMatchMaps(newMaps);
+                    }}
+                    className="flex-1 px-3 py-2 bg-pubg-card border border-pubg-border rounded-lg text-sm text-white focus:outline-none focus:border-pubg-gold transition-colors"
+                  >
+                    {PRESET_MAPS.map((preset) => (
+                      <option key={preset} value={preset}>{preset}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div>
             <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">Initial Status</label>
             <select
               value={newSeasonStatus}
@@ -99,9 +177,10 @@ export default function AdminSeasonsTab({ seasons, onRefresh }: AdminSeasonsTabP
 
           <button
             type="submit"
-            className="w-full py-3 px-4 rounded-xl bg-pubg-gold text-slate-950 font-black text-sm uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-neon-gold flex items-center justify-center gap-2"
+            disabled={isSubmitting}
+            className="w-full py-3 px-4 rounded-xl bg-pubg-gold text-slate-950 font-black text-sm uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-neon-gold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Plus className="w-4 h-4" /> Create Season
+            <Plus className="w-4 h-4" /> {isSubmitting ? "Creating..." : "Create Season"}
           </button>
         </form>
       </div>
