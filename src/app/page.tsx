@@ -251,13 +251,54 @@ export default function PublicLeaderboardPage() {
                 </div>
               ) : (
                 <div className="pt-4 text-xs text-slate-500 font-medium">
-                  No teams registered for this season yet. Use Admin Panel to add teams.
+                  No teams registered for this season yet.
                 </div>
               )}
 
             </div>
           </div>
         )}
+
+        {/* Easy To Understand: Point System & Rules Guide for Spectators & Players */}
+        <div className="glass-panel rounded-2xl p-6 border border-pubg-border bg-slate-900/50 space-y-4">
+          <div className="flex items-center justify-between border-b border-pubg-border/50 pb-3">
+            <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-pubg-gold" /> OFFICIAL PUBG ESPORTS POINT SYSTEM
+            </h3>
+            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest bg-slate-800 px-2.5 py-1 rounded-full border border-slate-700">
+              SUPER Ruleset
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-pubg-border/60 space-y-1">
+              <div className="flex items-center gap-2 font-bold text-pubg-gold text-sm">
+                <Trophy className="w-4 h-4 text-pubg-gold" /> WWCD Victory
+              </div>
+              <p className="text-slate-300 text-[11px] leading-relaxed">
+                Awarded to the last surviving team of a match. <strong>Winner Winner Chicken Dinner!</strong>
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-pubg-border/60 space-y-1">
+              <div className="flex items-center gap-2 font-bold text-pubg-orange text-sm">
+                <Flame className="w-4 h-4 text-pubg-orange" /> Kill Points (1 pt / Kill)
+              </div>
+              <p className="text-slate-300 text-[11px] leading-relaxed">
+                Each team earns <strong>1 Point per elimination</strong> scored during matches.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-pubg-border/60 space-y-1">
+              <div className="flex items-center gap-2 font-bold text-cyan-400 text-sm">
+                <Shield className="w-4 h-4 text-cyan-400" /> Placement Points
+              </div>
+              <p className="text-slate-300 text-[11px] leading-relaxed">
+                1st = 10 pts • 2nd = 6 pts • 3rd = 5 pts • 4th = 4 pts • 5th = 3 pts • 6th = 2 pts • 7th-8th = 1 pt.
+              </p>
+            </div>
+          </div>
+        </div>
 
       </main>
 

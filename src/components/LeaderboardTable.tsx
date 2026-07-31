@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { LeaderboardEntry } from "@/lib/types";
 import { getTeamLogoUrl } from "@/lib/pubgRules";
-import { Trophy, Crown, Flame, Crosshair, Search, ChevronRight, Hash } from "lucide-react";
+import { Trophy, Crown, Flame, Search, ChevronRight } from "lucide-react";
 
 interface LeaderboardTableProps {
   standings: LeaderboardEntry[];
@@ -24,15 +24,15 @@ export default function LeaderboardTable({ standings, onSelectTeam }: Leaderboar
       {/* Table Header Controls */}
       <div className="p-4 sm:p-6 bg-slate-900/60 border-b border-pubg-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-pubg-gold/15 border border-pubg-gold/30 text-pubg-gold">
+          <div className="p-2.5 rounded-xl bg-pubg-gold/15 border border-pubg-gold/30 text-pubg-gold shrink-0">
             <Trophy className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-extrabold text-white text-lg tracking-wide flex items-center gap-2">
+            <h3 className="font-extrabold text-white text-base sm:text-lg tracking-wide flex items-center gap-2">
               OVERALL LEADERBOARD
             </h3>
             <p className="text-xs text-slate-400">
-              Sorted by Total Points &gt; WWCD &gt; Kill Points &gt; Placement Points
+              Sorted by Total Points &gt; WWCD &gt; Kills &gt; Placement Pts
             </p>
           </div>
         </div>
@@ -50,8 +50,117 @@ export default function LeaderboardTable({ standings, onSelectTeam }: Leaderboar
         </div>
       </div>
 
-      {/* Table Content */}
-      <div className="overflow-x-auto">
+      {/* MOBILE RESPONSIVE CARD VIEW (Shown on phones < md) */}
+      <div className="block md:hidden divide-y divide-pubg-border/50">
+        {filteredStandings.length === 0 ? (
+          <div className="p-8 text-center text-slate-500 text-xs font-medium">
+            No tournament teams found matching your query.
+          </div>
+        ) : (
+          filteredStandings.map((entry, index) => {
+            const rank = index + 1;
+            const isGold = rank === 1;
+            const isSilver = rank === 2;
+            const isBronze = rank === 3;
+
+            return (
+              <div
+                key={entry.team.id}
+                onClick={() => onSelectTeam(entry)}
+                className={`p-4 cursor-pointer transition-all active:bg-slate-800/80 ${
+                  isGold
+                    ? "bg-amber-950/20"
+                    : isSilver
+                    ? "bg-slate-900/40"
+                    : isBronze
+                    ? "bg-amber-900/10"
+                    : "bg-pubg-dark/40"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  {/* Rank & Team info */}
+                  <div className="flex items-center gap-3">
+                    <div className="shrink-0">
+                      {isGold && (
+                        <span className="w-8 h-8 rounded-full bg-gold-gradient text-slate-950 flex items-center justify-center font-black shadow-neon-gold text-xs">
+                          <Crown className="w-4 h-4" />
+                        </span>
+                      )}
+                      {isSilver && (
+                        <span className="w-8 h-8 rounded-full bg-silver-gradient text-slate-950 flex items-center justify-center font-black text-xs">
+                          2
+                        </span>
+                      )}
+                      {isBronze && (
+                        <span className="w-8 h-8 rounded-full bg-bronze-gradient text-white flex items-center justify-center font-black text-xs">
+                          3
+                        </span>
+                      )}
+                      {!isGold && !isSilver && !isBronze && (
+                        <span className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 text-slate-400 font-bold flex items-center justify-center text-xs">
+                          #{rank}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="w-9 h-9 rounded-lg bg-slate-900 border border-pubg-border p-1 flex items-center justify-center shrink-0">
+                      <img
+                        src={getTeamLogoUrl(entry.team.team_name, entry.team.logo_url)}
+                        alt={entry.team.team_name}
+                        className="w-full h-full object-contain rounded"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = getTeamLogoUrl(entry.team.team_name);
+                        }}
+                      />
+                    </div>
+
+                    <div className="truncate">
+                      <h4 className="font-extrabold text-white text-sm truncate flex items-center gap-1.5">
+                        {entry.team.team_name}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 truncate">
+                        Cap: {entry.team.captain_name || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Total Points Pill */}
+                  <div className="text-right shrink-0">
+                    <div className="px-3 py-1 rounded-xl bg-pubg-gold/15 border border-pubg-gold/40 text-pubg-gold font-black text-base shadow-neon-gold">
+                      {entry.totalPoints} <span className="text-[10px] uppercase font-bold text-slate-300">pts</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sub Stats Grid */}
+                <div className="grid grid-cols-4 gap-2 text-center pt-2 border-t border-pubg-border/30 text-xs">
+                  <div className="bg-slate-900/60 p-1.5 rounded-lg border border-slate-800">
+                    <span className="block text-[9px] text-slate-400 uppercase font-bold">Matches</span>
+                    <span className="font-bold text-white">{entry.matchesPlayed}</span>
+                  </div>
+                  <div className="bg-slate-900/60 p-1.5 rounded-lg border border-slate-800">
+                    <span className="block text-[9px] text-slate-400 uppercase font-bold">WWCD</span>
+                    <span className={`font-bold ${entry.wwcds > 0 ? "text-emerald-400" : "text-slate-400"}`}>
+                      {entry.wwcds}
+                    </span>
+                  </div>
+                  <div className="bg-slate-900/60 p-1.5 rounded-lg border border-slate-800">
+                    <span className="block text-[9px] text-slate-400 uppercase font-bold">Kills</span>
+                    <span className="font-bold text-pubg-orange">{entry.killPoints}</span>
+                  </div>
+                  <div className="bg-slate-900/60 p-1.5 rounded-lg border border-slate-800">
+                    <span className="block text-[9px] text-slate-400 uppercase font-bold">Place Pts</span>
+                    <span className="font-bold text-cyan-400">{entry.placementPoints}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* DESKTOP TABLE VIEW (Shown on md screens and up) */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
             <tr className="bg-slate-950/80 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-pubg-border">
@@ -206,3 +315,4 @@ export default function LeaderboardTable({ standings, onSelectTeam }: Leaderboar
     </div>
   );
 }
+

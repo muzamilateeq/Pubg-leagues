@@ -23,7 +23,7 @@ export default function StatCards({ standings, onSelectTeam }: StatCardsProps) {
       {secondPlace && (
         <div 
           onClick={() => onSelectTeam(secondPlace)}
-          className="order-2 md:order-1 relative cursor-pointer glass-panel silver-glow-card rounded-2xl p-6 flex flex-col justify-between hover:scale-[1.02] transition-transform overflow-hidden group"
+          className="order-2 md:order-1 relative cursor-pointer glass-panel silver-glow-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:scale-[1.02] transition-transform overflow-hidden group"
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-400/20 to-transparent rounded-bl-full pointer-events-none" />
           
@@ -35,8 +35,8 @@ export default function StatCards({ standings, onSelectTeam }: StatCardsProps) {
               <span className="text-3xl font-black italic text-slate-400">2nd</span>
             </div>
 
-            <div className="flex items-center gap-4 mb-4">
-              <div className="relative w-16 h-16 rounded-xl bg-slate-900 border-2 border-slate-400 p-1 flex items-center justify-center shadow-lg group-hover:border-white transition-colors">
+            <div className="flex items-center gap-3 sm:gap-4 mb-4">
+              <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-900 border-2 border-slate-400 p-1 flex items-center justify-center shadow-lg group-hover:border-white transition-colors shrink-0">
                 <img
                   src={getTeamLogoUrl(secondPlace.team.team_name, secondPlace.team.logo_url)}
                   alt={secondPlace.team.team_name}
@@ -46,11 +46,11 @@ export default function StatCards({ standings, onSelectTeam }: StatCardsProps) {
                   }}
                 />
               </div>
-              <div>
-                <h3 className="text-xl font-black text-white group-hover:text-slate-200 transition-colors">
+              <div className="truncate">
+                <h3 className="text-lg sm:text-xl font-black text-white group-hover:text-slate-200 transition-colors truncate">
                   {secondPlace.team.team_name}
                 </h3>
-                <p className="text-xs text-slate-400">Captain: {secondPlace.team.captain_name || "N/A"}</p>
+                <p className="text-xs text-slate-400 truncate">Captain: {secondPlace.team.captain_name || "N/A"}</p>
               </div>
             </div>
           </div>
@@ -76,22 +76,22 @@ export default function StatCards({ standings, onSelectTeam }: StatCardsProps) {
       {firstPlace && (
         <div 
           onClick={() => onSelectTeam(firstPlace)}
-          className="order-1 md:order-2 relative cursor-pointer glass-panel gold-glow-card rounded-2xl p-7 flex flex-col justify-between hover:scale-[1.03] transition-transform overflow-hidden group bg-gradient-to-b from-amber-950/40 via-pubg-card to-pubg-card md:-translate-y-3"
+          className="order-1 md:order-2 relative cursor-pointer glass-panel gold-glow-card rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:scale-[1.03] transition-transform overflow-hidden group bg-gradient-to-b from-amber-950/40 via-pubg-card to-pubg-card md:-translate-y-3"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pubg-gold/30 to-transparent rounded-bl-full pointer-events-none" />
           
           <div>
             <div className="flex items-center justify-between mb-4">
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-pubg-gold/20 border border-pubg-gold text-pubg-gold text-xs font-black tracking-wider uppercase shadow-neon-gold">
+              <span className="flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-pubg-gold/20 border border-pubg-gold text-pubg-gold text-xs font-black tracking-wider uppercase shadow-neon-gold">
                 <Crown className="w-4 h-4 text-pubg-gold animate-bounce" /> #1 TOURNAMENT LEADER
               </span>
-              <span className="text-4xl font-black italic text-pubg-gold drop-shadow-[0_2px_10px_rgba(243,175,25,0.5)]">
+              <span className="text-3xl sm:text-4xl font-black italic text-pubg-gold drop-shadow-[0_2px_10px_rgba(243,175,25,0.5)]">
                 1st
               </span>
             </div>
 
-            <div className="flex items-center gap-4 mb-4">
-              <div className="relative w-20 h-20 rounded-2xl bg-slate-900 border-2 border-pubg-gold p-1.5 flex items-center justify-center shadow-neon-gold group-hover:scale-105 transition-transform">
+            <div className="flex items-center gap-3 sm:gap-4 mb-4">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-900 border-2 border-pubg-gold p-1.5 flex items-center justify-center shadow-neon-gold group-hover:scale-105 transition-transform shrink-0">
                 <img
                   src={getTeamLogoUrl(firstPlace.team.team_name, firstPlace.team.logo_url)}
                   alt={firstPlace.team.team_name}
@@ -101,11 +101,11 @@ export default function StatCards({ standings, onSelectTeam }: StatCardsProps) {
                   }}
                 />
               </div>
-              <div>
-                <h3 className="text-2xl font-black text-white group-hover:text-pubg-gold transition-colors">
+              <div className="truncate">
+                <h3 className="text-xl sm:text-2xl font-black text-white group-hover:text-pubg-gold transition-colors truncate">
                   {firstPlace.team.team_name}
                 </h3>
-                <p className="text-xs text-pubg-gold/80 font-semibold">Captain: {firstPlace.team.captain_name || "N/A"}</p>
+                <p className="text-xs text-pubg-gold/80 font-semibold truncate">Captain: {firstPlace.team.captain_name || "N/A"}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
                     {firstPlace.wwcds} WWCD Winner
@@ -136,7 +136,7 @@ export default function StatCards({ standings, onSelectTeam }: StatCardsProps) {
       {thirdPlace && (
         <div 
           onClick={() => onSelectTeam(thirdPlace)}
-          className="order-3 relative cursor-pointer glass-panel bronze-glow-card rounded-2xl p-6 flex flex-col justify-between hover:scale-[1.02] transition-transform overflow-hidden group"
+          className="order-3 relative cursor-pointer glass-panel bronze-glow-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:scale-[1.02] transition-transform overflow-hidden group"
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-700/20 to-transparent rounded-bl-full pointer-events-none" />
           
@@ -148,8 +148,8 @@ export default function StatCards({ standings, onSelectTeam }: StatCardsProps) {
               <span className="text-3xl font-black italic text-amber-600">3rd</span>
             </div>
 
-            <div className="flex items-center gap-4 mb-4">
-              <div className="relative w-16 h-16 rounded-xl bg-slate-900 border-2 border-amber-600 p-1 flex items-center justify-center shadow-lg group-hover:border-amber-400 transition-colors">
+            <div className="flex items-center gap-3 sm:gap-4 mb-4">
+              <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-900 border-2 border-amber-600 p-1 flex items-center justify-center shadow-lg group-hover:border-amber-400 transition-colors shrink-0">
                 <img
                   src={getTeamLogoUrl(thirdPlace.team.team_name, thirdPlace.team.logo_url)}
                   alt={thirdPlace.team.team_name}
@@ -159,11 +159,11 @@ export default function StatCards({ standings, onSelectTeam }: StatCardsProps) {
                   }}
                 />
               </div>
-              <div>
-                <h3 className="text-xl font-black text-white group-hover:text-amber-400 transition-colors">
+              <div className="truncate">
+                <h3 className="text-lg sm:text-xl font-black text-white group-hover:text-amber-400 transition-colors truncate">
                   {thirdPlace.team.team_name}
                 </h3>
-                <p className="text-xs text-slate-400">Captain: {thirdPlace.team.captain_name || "N/A"}</p>
+                <p className="text-xs text-slate-400 truncate">Captain: {thirdPlace.team.captain_name || "N/A"}</p>
               </div>
             </div>
           </div>
