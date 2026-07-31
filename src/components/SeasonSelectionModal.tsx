@@ -77,12 +77,10 @@ export default function SeasonSelectionModal({
           ) : (
             seasons.filter(s => s.name && !s.name.toLowerCase().includes("testiing")).map((season) => {
               const isSelected = season.id === selectedSeasonId;
-              const actualTeams = teams.filter((t) => t.season_id === season.id);
-              const seasonTeamsCount = actualTeams.length > 0 ? actualTeams.length : 16;
-              const actualMatches = matches.filter(
+              const seasonTeamsCount = teams.filter((t) => t.season_id === season.id).length;
+              const publishedMatchesCount = matches.filter(
                 (m) => m.season_id === season.id && m.status !== "upcoming" && m.is_published !== false
-              );
-              const publishedMatchesCount = actualMatches.length > 0 ? actualMatches.length : 4;
+              ).length;
 
               const hasStarted = publishedMatchesCount > 0;
 
