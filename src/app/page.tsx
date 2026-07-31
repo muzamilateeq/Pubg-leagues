@@ -27,6 +27,11 @@ export default function PublicLeaderboardPage() {
   // Load Data function (from Supabase or local store)
   const fetchData = async () => {
     setIsLoading(true);
+    let s: Season[] = [];
+    let t: Team[] = [];
+    let m: Match[] = [];
+    let r: MatchResult[] = [];
+
     if (isSupabaseConfigured && supabase) {
       try {
         const { data: sData } = await supabase.from("seasons").select("*").order("created_at", { ascending: false });
@@ -34,32 +39,29 @@ export default function PublicLeaderboardPage() {
         const { data: mData } = await supabase.from("matches").select("*").order("match_number", { ascending: true });
         const { data: rData } = await supabase.from("match_results").select("*");
 
-        if (sData && sData.length > 0) setSeasons(sData);
-        if (tData) setTeams(tData);
-        if (mData) setMatches(mData);
-        if (rData) setResults(rData);
-
-        if (sData && sData.length > 0 && !selectedSeasonId) {
-          const active = sData.find((s) => s.status === "active") || sData[0];
-          setSelectedSeasonId(active.id);
-        }
-        setIsLoading(false);
-        return;
+        if (sData && sData.length > 0) s = sData;
+        if (tData && tData.length > 0) t = tData;
+        if (mData && mData.length > 0) m = mData;
+        if (rData && rData.length > 0) r = rData;
       } catch (err) {
         console.error("Supabase load error, utilizing local store:", err);
       }
     }
 
-    // Local Storage / Demo Fallback
+    // Local Storage / Demo Fallback if database returns empty
     const local = getLocalStoreData();
-    setSeasons(local.seasons);
-    setTeams(local.teams);
-    setMatches(local.matches);
-    setResults(local.results);
+    if (s.length === 0) s = local.seasons;
+    if (t.length === 0) t = local.teams;
+    if (m.length === 0) m = local.matches;
+    if (r.length === 0) r = local.results;
 
-    if (local.seasons.length > 0 && !selectedSeasonId) {
-      const active = local.seasons.find((s) => s.status === "active") || local.seasons[0];
-      setSelectedSeasonId(active.id);
+    setSeasons(s);
+    setTeams(t);
+    setMatches(m);
+    setResults(r);
+
+    if (s.length > 0) {
+      setSelectedSeasonId((prev) => prev || s.find((x) => x.status === "active")?.id || s[0].id);
     }
     setIsLoading(false);
   };
