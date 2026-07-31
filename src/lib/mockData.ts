@@ -4,21 +4,15 @@ import { getPlacementPoints } from "./pubgRules";
 export const INITIAL_SEASONS: Season[] = [
   {
     id: "season-1",
-    name: "PUBG Global Championship 2026 - Season 1",
+    name: "PMSC Season 1",
     status: "active",
     created_at: new Date("2026-01-10").toISOString(),
   },
   {
     id: "season-2",
-    name: "PUBG Masters Series - Season 2",
+    name: "PMSC Season 2 - Masters",
     status: "active",
     created_at: new Date("2026-03-01").toISOString(),
-  },
-  {
-    id: "season-3",
-    name: "PUBG Continental Series 2025 (Legacy)",
-    status: "completed",
-    created_at: new Date("2025-11-15").toISOString(),
   },
 ];
 
